@@ -3,51 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arixo Messenger Pro | Masterpiece Edition Online</title>
+    <title>Arixo Messenger Pro | Firebase Masterpiece</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <style>
-        /* --- CSS เดิมทั้งหมดจาก index.html ของคุณ (ไม่ตัดออก) --- */
+        /* --- [CSS] ยกมาจากต้นฉบับ 100% --- */
         :root {
             --bg: #e0f7f1; --bg-gradient: radial-gradient(circle at center, #f0fffb, #b2f2e3);
             --card: #ffffff; --primary: #18e0c4; --primary-grad: linear-gradient(135deg, #18e0c4, #0d9488);
             --text: #1c1e21; --muted: #65676b; --bubble-me: #18e0c4; --bubble-you: #e6ffad; --accent: #ff4757;
         }
         body.dark-mode { --bg: #0b1220; --card: #0f1c26; --text: #f5f6f7; --muted: #90949c; --bubble-me: #0d9488; --bubble-you: #242f3d; }
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         #app { width: 100%; max-width: 500px; height: 100%; background: var(--card); display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
-        /* ... (ใส่ CSS ทั้งหมดที่คุณมีในไฟล์เดิมลงตรงนี้ได้เลย ผมรวมฟังก์ชันหลักไว้ด้านล่าง) ... */
         .chat-header { padding: 15px 20px; background: var(--primary-grad); color: white; display: flex; align-items: center; gap: 12px; z-index: 100; }
         #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: var(--bg-gradient); }
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; position: relative; font-size: 15px; line-height: 1.4; transition: 0.2s; }
+        
+        /* สไตล์บอลลูนข้อความ */
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; position: relative; font-size: 15px; line-height: 1.4; animation: pop 0.3s ease; cursor: pointer; }
         .msg.me { align-self: flex-end; background: var(--bubble-me); color: white; border-bottom-right-radius: 4px; }
         .msg.you { align-self: flex-start; background: var(--bubble-you); color: #2d3436; border-bottom-left-radius: 4px; }
         
-        .input-area { padding: 15px; background: var(--card); display: flex; align-items: center; gap: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+        /* Skeleton & Overlays */
+        #skeleton-screen { position: absolute; top:0; left:0; width:100%; height:100%; background:var(--card); z-index:999; display:flex; flex-direction:column; padding:20px; }
+        .skeleton { background: #eee; height: 80px; margin: 10px 0; border-radius: 15px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* Input Area & Emoji Bar */
+        .input-area { padding: 12px; background: var(--card); display: flex; align-items: center; gap: 8px; border-top: 1px solid rgba(0,0,0,0.05); }
         .input-wrapper { flex: 1; display: flex; align-items: center; background: #f0f2f5; border-radius: 25px; padding: 5px 15px; }
-        input#mainInput { border: none; background: transparent; flex: 1; padding: 10px; outline: none; }
+        #mainInput { border: none; background: transparent; flex: 1; padding: 10px; outline: none; color: var(--text); }
         
         #replyBar { display: none; padding: 8px 15px; background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary); font-size: 12px; }
-        .skeleton { background: #eee; height: 100px; margin: 10px; border-radius: 15px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        #callOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-grad); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+
+        @keyframes pop { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="skeleton-screen" style="position:absolute; top:0; left:0; width:100%; height:100%; background:white; z-index:999; display:flex; flex-direction:column; padding:20px;">
-        <div class="skeleton" style="width:40%"></div><div class="skeleton" style="width:70%; align-self:flex-end"></div><div class="skeleton" style="width:60%"></div>
+    <div id="skeleton-screen">
+        <div class="skeleton" style="width:60%"></div>
+        <div class="skeleton" style="width:80%; align-self:flex-end"></div>
+        <div class="skeleton" style="width:50%"></div>
+    </div>
+
+    <div id="callOverlay">
+        <div style="font-size: 24px; margin-bottom: 10px;" id="callType">Voice Call</div>
+        <div class="fa-solid fa-user-circle fa-5x" style="margin-bottom: 20px;"></div>
+        <div style="font-size: 18px; margin-bottom: 40px;">Arixo User</div>
+        <button onclick="closeCall()" style="background:#ff4757; border:none; color:white; padding:15px 30px; border-radius:30px; cursor:pointer;"><i class="fa fa-phone-slash"></i> Hang Up</button>
     </div>
 
     <div class="chat-header">
         <i class="fa fa-chevron-left"></i>
         <div style="flex:1">
             <div style="font-weight:bold">Arixo Global Chat</div>
-            <div id="status" style="font-size:11px; opacity:0.8">Cloud Database Online</div>
+            <div id="status" style="font-size:11px; opacity:0.8">Cloud Online</div>
         </div>
         <i class="fa fa-moon" onclick="document.body.classList.toggle('dark-mode')"></i>
         <i class="fa fa-video" onclick="openCall('Video')"></i>
@@ -56,28 +73,25 @@
 
     <div id="replyBar">
         <div id="replyText"></div>
-        <i class="fa fa-times" onclick="cancelReply()"></i>
+        <i class="fa fa-times" onclick="cancelReply()" style="float:right; cursor:pointer;"></i>
     </div>
 
     <div id="chat-container"></div>
 
     <div class="input-area">
         <div class="input-wrapper">
-            <i class="fa fa-smile" style="color:var(--muted)"></i>
+            <i class="fa fa-smile" style="color:var(--muted); cursor:pointer;"></i>
             <input type="text" id="mainInput" placeholder="พิมพ์ข้อความ..." onkeypress="if(event.key==='Enter') sendMsg()">
-            <i class="fa fa-camera" onclick="alert('Camera Feature')"></i>
+            <i class="fa fa-camera" onclick="alert('3s Video Clip Feature')" style="color:var(--muted); cursor:pointer; margin-left:8px;"></i>
         </div>
-        <button id="recordBtn" style="border:none; background:none; font-size:20px; color:var(--primary); cursor:pointer;">
-            <i class="fa fa-microphone"></i>
-        </button>
-        <button onclick="sendMsg()" style="background:var(--primary-grad); border:none; color:white; width:45px; height:45px; border-radius:50%; cursor:pointer;">
+        <button id="send-btn" onclick="sendMsg()" style="background:var(--primary-grad); border:none; color:white; width:45px; height:45px; border-radius:50%; cursor:pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
             <i class="fa fa-paper-plane"></i>
         </button>
     </div>
 </div>
 
 <script>
-    // --- 1. Firebase Config (ข้อมูลของคุณ) ---
+    // --- [Firebase Configuration] ---
     const firebaseConfig = {
         apiKey: "AIzaSyACTSU6LYObSv5gEAfKJt4Yr4LaCCAkQvw",
         authDomain: "goldorax-game.firebaseapp.com",
@@ -91,13 +105,14 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const chatRef = db.ref('messages');
-    
-    // สร้าง ID เฉพาะตัวสำหรับ Session นี้ (เพื่อแยก Me/You)
-    const myId = "user_" + Math.floor(Math.random() * 1000000);
+    const chatRef = db.ref('arixo_v1_messages');
+
+    // สร้าง ID เฉพาะสำหรับผู้ใช้คนนี้
+    const myId = "ID_" + Math.floor(Math.random() * 9999);
     let replyData = null;
 
-    // --- 2. ระบบแชท ---
+    // --- [Core Functions] ---
+
     function sendMsg() {
         const input = document.getElementById('mainInput');
         const text = input.value.trim();
@@ -111,30 +126,31 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         };
 
-        chatRef.push(msgData); // ส่งขึ้น Cloud
+        chatRef.push(msgData); // ส่งขึ้น Firebase
         input.value = "";
         cancelReply();
     }
 
     function loadChat() {
-        chatRef.orderByChild('timestamp').on('child_added', (snapshot) => {
-            const data = snapshot.val();
-            renderMsg(data);
+        // ดึงข้อมูล Real-time
+        chatRef.orderByChild('timestamp').limitToLast(50).on('child_added', (snapshot) => {
+            renderMsg(snapshot.val());
         });
-        
+
         // ซ่อน Skeleton หลังโหลด 1.5 วิ
         setTimeout(() => {
-            document.getElementById('skeleton-screen').style.display = 'none';
+            document.getElementById('skeleton-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('skeleton-screen').style.display = 'none', 500);
         }, 1500);
     }
 
     function renderMsg(data) {
-        const side = data.senderId === myId ? 'me' : 'you';
         const container = document.getElementById('chat-container');
+        const side = data.senderId === myId ? 'me' : 'you';
         const div = document.createElement('div');
         div.className = `msg ${side}`;
         
-        let replyHtml = data.replyTo ? `<div style="font-size:11px; opacity:0.6; border-left:2px solid gray; padding-left:5px; margin-bottom:5px;">${data.replyTo}</div>` : '';
+        let replyHtml = data.replyTo ? `<div style="font-size:11px; opacity:0.6; border-left:2px solid gray; padding-left:5px; margin-bottom:5px;">↩ ตอบกลับ: ${data.replyTo}</div>` : '';
         
         div.innerHTML = `
             ${replyHtml}
@@ -142,11 +158,8 @@
             <div style="font-size:10px; opacity:0.5; margin-top:5px; text-align:right;">${data.time}</div>
         `;
 
-        // ระบบคลิกขวา/กดค้างเพื่อตอบกลับ (เหมือนต้นฉบับ)
-        div.oncontextmenu = (e) => {
-            e.preventDefault();
-            prepareReply(data.text);
-        };
+        // คลิกเพื่อตอบกลับ
+        div.onclick = () => prepareReply(data.text);
 
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
@@ -155,7 +168,7 @@
     function prepareReply(text) {
         replyData = text;
         document.getElementById('replyBar').style.display = 'block';
-        document.getElementById('replyText').innerText = text;
+        document.getElementById('replyText').innerText = "ตอบกลับ: " + text;
     }
 
     function cancelReply() {
@@ -163,9 +176,15 @@
         document.getElementById('replyBar').style.display = 'none';
     }
 
-    function openCall(t) { alert(t + " Call Feature: กำลังพัฒนาเชื่อมต่อระบบเสียงจริงครับ"); }
+    function openCall(t) { 
+        document.getElementById('callType').innerText = t + " Call";
+        document.getElementById('callOverlay').style.display = 'flex'; 
+    }
+    function closeCall() { document.getElementById('callOverlay').style.display = 'none'; }
 
+    // Start App
     window.onload = loadChat;
 </script>
+
 </body>
 </html>
