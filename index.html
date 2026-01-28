@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Puffly x Arixo Masterpiece - Creator Edition</title>
+    <title>Puffly x Arixo - Creator Edition</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -22,18 +23,11 @@
 
         .nav .upload-btn {
             background: var(--puffly-grad);
-            width: 65px;
-            height: 40px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            font-size: 20px;
-            margin-top: -10px;
+            width: 65px; height: 40px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            color: #000; font-size: 20px; margin-top: -10px;
             box-shadow: 0 4px 12px rgba(0,200,150,0.4);
-            cursor: pointer;
-            border: 1.5px solid rgba(255,255,255,0.3);
+            cursor: pointer; border: 1.5px solid rgba(255,255,255,0.3);
         }
 
         .video-card { width:100%; height:100vh; scroll-snap-align:start; position:relative; }
@@ -85,7 +79,6 @@
         </div>
     </div>
 </div>
-
 <div id="page-profile" class="page" style="background:#000; padding:60px 0 100px; overflow-y: auto;">
     <div style="text-align:center; padding: 0 20px;">
         <div style="position: relative; width:100px; height:100px; margin:0 auto;">
@@ -101,13 +94,18 @@
             <h2 id="profileName" style="margin:0;">@Creator_Asura</h2>
             <i class="fa-solid fa-pen-to-square" style="color:#888; cursor:pointer;" onclick="editProfileName()"></i>
         </div>
-        <p style="color:#888; margin:5px 0;">ผู้สร้างเกม Asura's Ransom</p>
+        <p id="profileBio" style="color:#888; margin:5px 0;">ผู้สร้างเกม Asura's Ransom</p>
+        <div id="followerCountDisplay" style="font-size:12px; color:var(--puffly-green);">ผู้ติดตาม: 0 คน</div>
+        
+        <button id="loginBtn" onclick="loginWithGoogle()" style="margin-top:10px; background:#fff; color:#000; border:none; padding:8px 15px; border-radius:15px; font-weight:bold; font-size:12px; cursor:pointer;">
+            <i class="fa-brands fa-google"></i> เชื่อมต่อ Google
+        </button>
     </div>
 
     <div style="display: flex; gap: 10px; padding: 0 20px; margin-top: 20px;">
         <div onclick="document.getElementById('rechargeMenu').style.display='block'" style="flex: 1; background: #222; padding: 15px; border-radius: 20px; border: 1px solid var(--gold); text-align: center; cursor:pointer;">
-            <small style="color:var(--gold); font-size: 10px;">เหรียญสำหรับเปย์ (คลิกเติม)</small>
-            <div style="font-size: 16px; font-weight: bold; color: #fff;">฿<span id="userBalanceDisplay">100,000.00</span></div>
+            <small style="color:var(--gold); font-size: 10px;">เหรียญสำหรับเปย์</small>
+            <div style="font-size: 16px; font-weight: bold; color: #fff;">฿<span id="userBalanceDisplay">0.00</span></div>
         </div>
         <div style="flex: 1; background: #222; padding: 15px; border-radius: 20px; border: 1px solid var(--puffly-green); text-align: center;">
             <small style="color:var(--puffly-green); font-size: 10px;">รายได้สะสม</small>
@@ -115,247 +113,106 @@
         </div>
     </div>
     <div style="text-align:center; margin-top:10px;">
-        <button onclick="withdrawMoney()" style="background:var(--puffly-green); color:#000; border:none; padding:8px 25px; border-radius:20px; font-weight:bold; font-size:12px;">ถอนรายได้สะสม (หัก 5%)</button>
+        <button id="withdrawBtn" onclick="withdrawMoney()" style="background:#333; color:#888; border:none; padding:8px 25px; border-radius:20px; font-weight:bold; font-size:12px; cursor:not-allowed;">ถอนรายได้ (ต้องมี 1,000 ผู้ติดตาม)</button>
     </div>
 
     <div style="display:flex; justify-content:space-around; border-top:1px solid #222; margin-top:20px;">
         <button onclick="switchTab('my-vids', this)" class="tab-btn active-tab" style="background:none; border:none; color:var(--puffly-green); padding:15px; flex:1;"><i class="fa-solid fa-table-cells"></i></button>
         <button onclick="switchTab('liked-vids', this)" class="tab-btn" style="background:none; border:none; color:#555; padding:15px; flex:1;"><i class="fa-solid fa-heart"></i></button>
-        <button onclick="switchTab('saved-vids', this)" class="tab-btn" style="background:none; border:none; color:#555; padding:15px; flex:1;"><i class="fa-solid fa-bookmark"></i></button>
     </div>
     <div id="tabContent" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; padding: 2px;"></div>
-</div>
-
-<div id="giftMenu" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(20, 20, 20, 0.98); border-top: 2px solid var(--puffly-green); border-radius: 25px 25px 0 0; padding: 20px; z-index: 10002; box-sizing: border-box;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <b style="color:var(--puffly-green); font-size:16px;">🎁 ส่งของขวัญสนับสนุน</b>
-        <i class="fa-solid fa-circle-xmark" style="cursor:pointer; font-size:20px; color:#555;" onclick="toggleGiftMenu(false)"></i>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-height: 300px; overflow-y: auto;">
-        <div class="gift-item" onclick="processGift('ไอศกรีม 🍦', 50)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center; cursor:pointer;"><span>🍦</span><br><small>฿50</small></div>
-        <div class="gift-item" onclick="processGift('จอยทอง 🎮', 500)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center; cursor:pointer;"><span>🎮</span><br><small>฿500</small></div>
-        <div class="gift-item" onclick="processGift('เพชร 💎', 5000)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center; cursor:pointer;"><span>💎</span><br><small>฿5k</small></div>
-        <div class="gift-item" onclick="processGift('มังกรทอง 🐉', 50000)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center; cursor:pointer;"><span>🐉</span><br><small>฿50k</small></div>
-    </div>
 </div>
 
 <div id="rechargeMenu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1a1a1a; border: 2px solid var(--gold); border-radius: 25px; padding: 20px; z-index: 10005; box-shadow: 0 0 40px rgba(0,0,0,0.9); box-sizing: border-box;">
     <div style="text-align:center; margin-bottom:20px;">
         <h3 style="color:var(--gold); margin:0; font-size: 20px;">💎 เติมเหรียญ Puffly</h3>
-        <p style="color:#888; font-size: 12px; margin: 5px 0;">เลือกแพ็กเกจเพื่อสนับสนุนครีเอเตอร์</p>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div onclick="addMoney(100)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer; border:1px solid #333;">
+        <div onclick="addMoney(100)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer;">
             <div style="color:var(--gold); font-weight:bold;">100 เหรียญ</div>
             <div style="font-size:11px; color:#aaa;">฿35.00</div>
         </div>
-        <div onclick="addMoney(500)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer; border:1px solid #333;">
-            <div style="color:var(--gold); font-weight:bold;">500 เหรียญ</div>
-            <div style="font-size:11px; color:#aaa;">฿149.00</div>
-        </div>
-        <div onclick="addMoney(1000)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer; border:1px solid #333;">
+        <div onclick="addMoney(1000)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer;">
             <div style="color:var(--gold); font-weight:bold;">1,000 เหรียญ</div>
             <div style="font-size:11px; color:#aaa;">฿299.00</div>
         </div>
-        <div onclick="addMoney(5000)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer; border:1px solid #333;">
-            <div style="color:var(--gold); font-weight:bold;">5,000 เหรียญ</div>
-            <div style="font-size:11px; color:#aaa;">฿1,450.00</div>
-        </div>
     </div>
-    <button onclick="document.getElementById('rechargeMenu').style.display='none'" style="width:100%; margin-top:20px; background:none; border:none; color:#777; cursor:pointer; font-size: 13px;">ยกเลิก</button>
+    <button onclick="document.getElementById('rechargeMenu').style.display='none'" style="width:100%; margin-top:20px; background:none; border:none; color:#777;">ยกเลิก</button>
 </div>
 
 <div class="nav">
     <button onclick="changePage('page-feed', this)" class="active"><i class="fa-solid fa-house"></i><span>สำรวจ</span></button>
     <button onclick="changePage('page-chat', this)"><i class="fa-solid fa-comment-dots"></i><span>ข้อความ</span></button>
-    <div class="upload-btn" onclick="alert('เลือกวิดีโอจากเครื่อง')"><i class="fa-solid fa-plus"></i></div>
-    <button onclick="alert('Live Stream จะปลดล็อกภายหลัง')"><i class="fa-solid fa-tower-broadcast"></i><span>ไลฟ์</span></button>
+    <div class="upload-btn" onclick="checkAuthAndAction('upload')"><i class="fa-solid fa-plus"></i></div>
+    <button onclick="checkAuthAndAction('live')"><i class="fa-solid fa-tower-broadcast"></i><span>ไลฟ์</span></button>
     <button onclick="changePage('page-profile', this)"><i class="fa-solid fa-user-ninja"></i><span>โปรไฟล์</span></button>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 <script>
-    // --- 1. ตั้งค่าตัวแปรระบบ ---
-    let pendingEarnings = 0;      
-    let userBalance = 100000.00;  
-    let isBlocked = false;
+    // --- 1. Firebase Config (ใส่ API Key ของคุณที่นี่) ---
+    const firebaseConfig = { apiKey: "YOUR_KEY", authDomain: "YOUR_DOMAIN", projectId: "YOUR_ID" };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    // --- 2. ระบบวาร์ป (ใหม่!) ---
-    function goToProfile(username) {
-        const profileTitle = document.getElementById('profileName');
-        if (profileTitle) profileTitle.innerText = username;
-        changePage('page-profile', document.querySelectorAll('.nav button')[3]); // ไปหน้าโปรไฟล์
-    }
+    let currentUserData = { balance: 0, earnings: 0, followers: 0 };
 
-    // --- 3. ระบบจัดการเงิน ---
-    function updateWalletUI() {
-        const wallet = document.getElementById('walletBalance');
-        if (wallet) wallet.innerText = pendingEarnings.toLocaleString(undefined, {minimumFractionDigits: 2});
-        const balance = document.getElementById('userBalanceDisplay');
-        if (balance) balance.innerText = userBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-    }
-
-    function addMoney(amount) {
-        userBalance += amount;
-        updateWalletUI();
-        alert(`เติมเหรียญสำเร็จ! ยอดปัจจุบัน: ฿${userBalance.toLocaleString()}`);
-        document.getElementById('rechargeMenu').style.display = 'none';
-    }
-
-    function processGift(name, price) {
-        if (userBalance < price) {
-            alert("ยอดเหรียญไม่เพียงพอ!");
-            return;
+    // --- 2. ระบบตรวจสอบสิทธิ์ (1,000 Followers) ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('loginBtn').style.display = 'none';
+            db.collection("users").doc(user.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    currentUserData = doc.data();
+                    updateUI();
+                } else {
+                    // สร้างบัญชีใหม่ใน DB
+                    db.collection("users").doc(user.uid).set({ balance: 0, earnings: 0, followers: 0, name: user.displayName });
+                }
+            });
         }
-        if (confirm(`ยืนยันการสนับสนุนด้วย ${name} ราคา ฿${price.toLocaleString()}?`)) {
-            userBalance -= price;
-            pendingEarnings += (price * 0.70);
-            const alertBox = document.getElementById('giftAlert');
-            document.getElementById('giftAlertText').innerText = `ส่ง ${name} สำเร็จ!`;
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
-            updateWalletUI();
-            toggleGiftMenu(false);
+    });
+
+    function updateUI() {
+        document.getElementById('userBalanceDisplay').innerText = currentUserData.balance.toLocaleString();
+        document.getElementById('walletBalance').innerText = currentUserData.earnings.toLocaleString();
+        document.getElementById('followerCountDisplay').innerText = `ผู้ติดตาม: ${currentUserData.followers} คน`;
+        
+        const withdrawBtn = document.getElementById('withdrawBtn');
+        if (currentUserData.followers >= 1000) {
+            withdrawBtn.style.background = "var(--puffly-green)";
+            withdrawBtn.style.color = "#000";
+            withdrawBtn.style.cursor = "pointer";
+            withdrawBtn.innerText = "ถอนรายได้สะสม (หัก 5%)";
         }
     }
 
-    function withdrawMoney() {
-        if (pendingEarnings < 100) { alert("ขั้นต่ำ 100 บาท"); return; }
-        let net = pendingEarnings * 0.95;
-        if (confirm(`ยืนยันการถอน ฿${net.toLocaleString()}?`)) {
-            pendingEarnings = 0;
-            updateWalletUI();
-            alert("ส่งคำขอสำเร็จ!");
+    function checkAuthAndAction(action) {
+        if (!auth.currentUser) return alert("กรุณาเข้าสู่ระบบก่อน");
+        if (currentUserData.followers < 1000) {
+            return alert("🔒 ฟีเจอร์นี้สำหรับ Creator ที่มีผู้ติดตาม 1,000 คนขึ้นไป");
         }
+        alert("กำลังเปิดระบบ " + action);
     }
 
-    // --- 4. ระบบหน้า Feed (ปุ่มครบ + จุดวาร์ป) ---
-    function initFeed() {
-        const container = document.getElementById('feedContainer');
-        const data = [
-            { user: '@Creator_Asura', desc: "อัปเดต Asura's Ransom! ☁️🎮", liked: false },
-            { user: '@Puffly_Official', desc: "New Generation Creator #Puffly", liked: true }
-        ];
-
-        container.innerHTML = "";
-        data.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
-                <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop muted playsinline></video>
-                
-                <div class="feed-sidebar">
-                    <div onclick="goToProfile('${item.user}')" style="position:relative; margin-bottom:15px; cursor:pointer;">
-                        <div style="width:45px; height:45px; border-radius:50%; border:2px solid #fff; overflow:hidden;">
-                            <img src="https://via.placeholder.com/45" style="width:100%;">
-                        </div>
-                        <div onclick="event.stopPropagation(); this.style.display='none';" style="position:absolute; bottom:-10px; left:50%; transform:translateX(-50%); background:#ff4444; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid #000;">
-                            <i class="fa-solid fa-plus" style="color:#fff;"></i>
-                        </div>
-                    </div>
-
-                    <div class="action-item">
-                        <div class="btn-circle ${item.liked?'liked':''}" onclick="this.classList.toggle('liked'); event.stopPropagation();">
-                            <i class="fa-solid fa-cloud"></i>
-                        </div>
-                        <span class="action-label">1.2k</span>
-                    </div>
-
-                    <div class="action-item" onclick="alert('เปิดคอมเมนต์'); event.stopPropagation();">
-                        <div class="btn-circle"><i class="fa-solid fa-comment-dots"></i></div>
-                        <span class="action-label">89</span>
-                    </div>
-
-                    <div class="action-item" onclick="this.style.color='var(--gold)'; event.stopPropagation();">
-                        <div class="btn-circle"><i class="fa-solid fa-bookmark"></i></div>
-                        <span class="action-label">บันทึก</span>
-                    </div>
-
-                    <div class="action-item" onclick="alert('คัดลอกลิงก์แล้ว'); event.stopPropagation();">
-                        <div class="btn-circle"><i class="fa-solid fa-share"></i></div>
-                        <span class="action-label">แชร์</span>
-                    </div>
-
-                    <div class="action-item" onclick="toggleGiftMenu(true); event.stopPropagation();">
-                        <div class="btn-circle" style="color:var(--gold);"><i class="fa-solid fa-gift"></i></div>
-                        <span class="action-label">ของขวัญ</span>
-                    </div>
-
-                    <div class="music-disc" style="margin-top:10px;">
-                        <div style="width:24px; height:24px; background:var(--puffly-grad); border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-music" style="font-size:10px; color:#000;"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="goToProfile('${item.user}')" style="position:absolute; left:15px; bottom:115px; z-index:10; cursor:pointer; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
-                    <h3 style="margin:0 0 8px 0; font-size:17px;">${item.user} <i class="fa-solid fa-circle-check" style="font-size:11px; color:var(--puffly-green);"></i></h3>
-                    <p style="font-size:14px; margin:0; font-weight:300;">${item.desc}</p>
-                    <div style="display:flex; align-items:center; margin-top:10px; font-size:13px;">
-                        <i class="fa-solid fa-music" style="margin-right:8px;"></i>
-                        <marquee scrollamount="3" style="width:150px;">เสียงต้นฉบับ - ${item.user}</marquee>
-                    </div>
-                </div>
-            `;
-            const vid = card.querySelector('video');
-            card.onclick = () => vid.paused ? vid.play() : vid.pause();
-            container.appendChild(card);
-        });
-    }
-
-    // --- 5. ระบบนำทาง ---
+    // --- ระบบเดิมที่ปรับปรุงให้เชื่อมต่อจริง (จำลองการทำงาน) ---
     function changePage(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
-        if(pageId === 'page-profile') switchTab('my-vids', document.querySelector('.tab-btn'));
     }
 
-    function switchTab(type, btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.style.color = '#555');
-        if(btn) btn.style.color = 'var(--puffly-green)';
-        const container = document.getElementById('tabContent');
-        container.innerHTML = "";
-        for (let i = 1; i <= 6; i++) {
-            container.innerHTML += `<div class="vid-grid-item" style="width:100%;aspect-ratio:3/4;background:#111;"><img src="https://picsum.photos/seed/${type}${i}/200/300" style="width:100%;height:100%;object-fit:cover;"></div>`;
-        }
+    async function loginWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
     }
 
-    // --- 6. แชทและการจัดการโปรไฟล์ ---
-    function toggleGiftMenu(show) { document.getElementById('giftMenu').style.display = show ? 'block' : 'none'; }
-    function toggleExtraMenu() { 
-        const m = document.getElementById('extraMenu');
-        m.style.display = (m.style.display === 'grid') ? 'none' : 'grid'; 
-    }
-    function toggleBlock() {
-        isBlocked = !isBlocked;
-        document.getElementById('chatStatusText').innerText = isBlocked ? "คุณบล็อกแชทนี้แล้ว" : "กำลังคุยกับ Arixo";
-        document.getElementById('chatInput').disabled = isBlocked;
-    }
-    function sendPrivateMsg() {
-        if (isBlocked) return;
-        const input = document.getElementById('chatInput');
-        if(!input.value.trim()) return;
-        const msg = document.createElement('div');
-        msg.style = "align-self:flex-end; background:var(--puffly-grad); padding:10px 15px; border-radius:15px; color:#000; margin-bottom:10px; max-width:80%;";
-        msg.innerText = input.value;
-        document.getElementById('chatBox').appendChild(msg);
-        input.value = '';
-        document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-    }
-    function startCall(t) { alert(`สาย${t}...`); }
-    function sendMedia(m) { alert(`เปิด: ${m}`); }
-    function editProfileName() {
-        const n = prompt("ชื่อใหม่:", document.getElementById('profileName').innerText);
-        if (n) document.getElementById('profileName').innerText = n;
-    }
-    function updateProfilePic(e) {
-        const r = new FileReader();
-        r.onload = () => document.getElementById('profilePicDisplay').innerHTML = `<img src="${r.result}" style="width:100%;height:100%;object-fit:cover;">`;
-        r.readAsDataURL(e.target.files[0]);
-    }
-
-    window.onload = () => { initFeed(); updateWalletUI(); };
+    window.onload = () => { /* init feed logic here */ };
 </script>
 </body>
 </html>
