@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Puffly x Arixo - Creator Edition</title>
+    <title>Puffly x Arixo Masterpiece - Creator Edition</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -97,23 +97,23 @@
         <p id="profileBio" style="color:#888; margin:5px 0;">ผู้สร้างเกม Asura's Ransom</p>
         <div id="followerCountDisplay" style="font-size:12px; color:var(--puffly-green);">ผู้ติดตาม: 0 คน</div>
         
-        <button id="loginBtn" onclick="loginWithGoogle()" style="margin-top:10px; background:#fff; color:#000; border:none; padding:8px 15px; border-radius:15px; font-weight:bold; font-size:12px; cursor:pointer;">
-            <i class="fa-brands fa-google"></i> เชื่อมต่อ Google
+        <button id="loginBtn" onclick="loginWithGoogle()" style="margin-top:10px; background:#fff; color:#000; border:none; padding:8px 15px; border-radius:15px; font-weight:bold; cursor:pointer;">
+            <i class="fa-brands fa-google"></i> ล็อกอิน/ลงทะเบียน
         </button>
     </div>
 
     <div style="display: flex; gap: 10px; padding: 0 20px; margin-top: 20px;">
         <div onclick="document.getElementById('rechargeMenu').style.display='block'" style="flex: 1; background: #222; padding: 15px; border-radius: 20px; border: 1px solid var(--gold); text-align: center; cursor:pointer;">
             <small style="color:var(--gold); font-size: 10px;">เหรียญสำหรับเปย์</small>
-            <div style="font-size: 16px; font-weight: bold; color: #fff;">฿<span id="userBalanceDisplay">0.00</span></div>
+            <div style="font-size: 16px; font-weight: bold;">฿<span id="userBalanceDisplay">0.00</span></div>
         </div>
         <div style="flex: 1; background: #222; padding: 15px; border-radius: 20px; border: 1px solid var(--puffly-green); text-align: center;">
             <small style="color:var(--puffly-green); font-size: 10px;">รายได้สะสม</small>
-            <div style="font-size: 16px; font-weight: bold; color: #fff;">฿<span id="walletBalance">0.00</span></div>
+            <div style="font-size: 16px; font-weight: bold;">฿<span id="walletBalance">0.00</span></div>
         </div>
     </div>
     <div style="text-align:center; margin-top:10px;">
-        <button id="withdrawBtn" onclick="withdrawMoney()" style="background:#333; color:#888; border:none; padding:8px 25px; border-radius:20px; font-weight:bold; font-size:12px; cursor:not-allowed;">ถอนรายได้ (ต้องมี 1,000 ผู้ติดตาม)</button>
+        <button id="withdrawBtn" onclick="withdrawMoney()" style="background:#333; color:#888; border:none; padding:8px 25px; border-radius:20px; font-weight:bold; font-size:12px; cursor:not-allowed;">ถอนรายได้ (ขั้นต่ำ 1,000 ผู้ติดตาม)</button>
     </div>
 
     <div style="display:flex; justify-content:space-around; border-top:1px solid #222; margin-top:20px;">
@@ -123,28 +123,33 @@
     <div id="tabContent" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; padding: 2px;"></div>
 </div>
 
-<div id="rechargeMenu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1a1a1a; border: 2px solid var(--gold); border-radius: 25px; padding: 20px; z-index: 10005; box-shadow: 0 0 40px rgba(0,0,0,0.9); box-sizing: border-box;">
-    <div style="text-align:center; margin-bottom:20px;">
-        <h3 style="color:var(--gold); margin:0; font-size: 20px;">💎 เติมเหรียญ Puffly</h3>
+<div id="giftMenu" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(20, 20, 20, 0.98); border-top: 2px solid var(--puffly-green); border-radius: 25px 25px 0 0; padding: 20px; z-index: 10002; box-sizing: border-box;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <b style="color:var(--puffly-green);">🎁 ส่งของขวัญ</b>
+        <i class="fa-solid fa-circle-xmark" onclick="toggleGiftMenu(false)"></i>
     </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+        <div onclick="processGift('ไอศกรีม 🍦', 50)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center;">🍦<br><small>฿50</small></div>
+        <div onclick="processGift('จอยทอง 🎮', 500)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center;">🎮<br><small>฿500</small></div>
+        <div onclick="processGift('เพชร 💎', 5000)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center;">💎<br><small>฿5k</small></div>
+        <div onclick="processGift('มังกรทอง 🐉', 50000)" style="background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; text-align:center;">🐉<br><small>฿50k</small></div>
+    </div>
+</div>
+
+<div id="rechargeMenu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #1a1a1a; border: 2px solid var(--gold); border-radius: 25px; padding: 20px; z-index: 10005;">
+    <h3 style="color:var(--gold); text-align:center;">💎 เติมเหรียญ</h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div onclick="addMoney(100)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer;">
-            <div style="color:var(--gold); font-weight:bold;">100 เหรียญ</div>
-            <div style="font-size:11px; color:#aaa;">฿35.00</div>
-        </div>
-        <div onclick="addMoney(1000)" style="background:#252525; padding:15px; border-radius:15px; text-align:center; cursor:pointer;">
-            <div style="color:var(--gold); font-weight:bold;">1,000 เหรียญ</div>
-            <div style="font-size:11px; color:#aaa;">฿299.00</div>
-        </div>
+        <div onclick="addMoney(100)" style="background:#252525; padding:15px; border-radius:15px; text-align:center;">100 เหรียญ<br><small>฿35</small></div>
+        <div onclick="addMoney(1000)" style="background:#252525; padding:15px; border-radius:15px; text-align:center;">1,000 เหรียญ<br><small>฿299</small></div>
     </div>
-    <button onclick="document.getElementById('rechargeMenu').style.display='none'" style="width:100%; margin-top:20px; background:none; border:none; color:#777;">ยกเลิก</button>
+    <button onclick="document.getElementById('rechargeMenu').style.display='none'" style="width:100%; margin-top:15px; background:none; border:none; color:#777;">ยกเลิก</button>
 </div>
 
 <div class="nav">
     <button onclick="changePage('page-feed', this)" class="active"><i class="fa-solid fa-house"></i><span>สำรวจ</span></button>
     <button onclick="changePage('page-chat', this)"><i class="fa-solid fa-comment-dots"></i><span>ข้อความ</span></button>
-    <div class="upload-btn" onclick="checkAuthAndAction('upload')"><i class="fa-solid fa-plus"></i></div>
-    <button onclick="checkAuthAndAction('live')"><i class="fa-solid fa-tower-broadcast"></i><span>ไลฟ์</span></button>
+    <div class="upload-btn" onclick="checkCreatorPrivilege('upload')"><i class="fa-solid fa-plus"></i></div>
+    <button onclick="checkCreatorPrivilege('live')"><i class="fa-solid fa-tower-broadcast"></i><span>ไลฟ์</span></button>
     <button onclick="changePage('page-profile', this)"><i class="fa-solid fa-user-ninja"></i><span>โปรไฟล์</span></button>
 </div>
 
@@ -153,24 +158,32 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-    // --- 1. Firebase Config (ใส่ API Key ของคุณที่นี่) ---
-    const firebaseConfig = { apiKey: "YOUR_KEY", authDomain: "YOUR_DOMAIN", projectId: "YOUR_ID" };
+    // --- Config จากที่คุณส่งมา ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyACTSU6LYObSv5gEAfKJt4Yr4LaCCAkQvw",
+      authDomain: "goldorax-game.firebaseapp.com",
+      databaseURL: "https://goldorax-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "goldorax-game",
+      storageBucket: "goldorax-game.firebasestorage.app",
+      messagingSenderId: "601999451419",
+      appId: "1:601999451419:web:f0782a8437b493eb8f5fbe",
+      measurementId: "G-09PW99QK06"
+    };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    let currentUserData = { balance: 0, earnings: 0, followers: 0 };
+    let userData = { balance: 0, earnings: 0, followers: 0 };
 
-    // --- 2. ระบบตรวจสอบสิทธิ์ (1,000 Followers) ---
+    // --- ระบบตรวจสอบผู้ติดตามและล็อกสิทธิ์ (TikTok Style) ---
     auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('loginBtn').style.display = 'none';
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
-                    currentUserData = doc.data();
+                    userData = doc.data();
                     updateUI();
                 } else {
-                    // สร้างบัญชีใหม่ใน DB
                     db.collection("users").doc(user.uid).set({ balance: 0, earnings: 0, followers: 0, name: user.displayName });
                 }
             });
@@ -178,41 +191,37 @@
     });
 
     function updateUI() {
-        document.getElementById('userBalanceDisplay').innerText = currentUserData.balance.toLocaleString();
-        document.getElementById('walletBalance').innerText = currentUserData.earnings.toLocaleString();
-        document.getElementById('followerCountDisplay').innerText = `ผู้ติดตาม: ${currentUserData.followers} คน`;
-        
-        const withdrawBtn = document.getElementById('withdrawBtn');
-        if (currentUserData.followers >= 1000) {
-            withdrawBtn.style.background = "var(--puffly-green)";
-            withdrawBtn.style.color = "#000";
-            withdrawBtn.style.cursor = "pointer";
-            withdrawBtn.innerText = "ถอนรายได้สะสม (หัก 5%)";
+        document.getElementById('userBalanceDisplay').innerText = userData.balance.toLocaleString();
+        document.getElementById('walletBalance').innerText = userData.earnings.toLocaleString();
+        document.getElementById('followerCountDisplay').innerText = `ผู้ติดตาม: ${userData.followers} คน`;
+        if (userData.followers >= 1000) {
+            const btn = document.getElementById('withdrawBtn');
+            btn.style.background = "var(--puffly-green)"; btn.style.color="#000"; btn.style.cursor="pointer";
+            btn.innerText = "ถอนรายได้สะสม (หัก 5%)";
         }
     }
 
-    function checkAuthAndAction(action) {
-        if (!auth.currentUser) return alert("กรุณาเข้าสู่ระบบก่อน");
-        if (currentUserData.followers < 1000) {
-            return alert("🔒 ฟีเจอร์นี้สำหรับ Creator ที่มีผู้ติดตาม 1,000 คนขึ้นไป");
-        }
+    function checkCreatorPrivilege(action) {
+        if (!auth.currentUser) return alert("กรุณาล็อกอินก่อน");
+        if (userData.followers < 1000) return alert(`🔒 ต้องมีผู้ติดตาม 1,000 คน (ขณะนี้มี ${userData.followers})`);
         alert("กำลังเปิดระบบ " + action);
     }
 
-    // --- ระบบเดิมที่ปรับปรุงให้เชื่อมต่อจริง (จำลองการทำงาน) ---
-    function changePage(pageId, btn) {
+    // --- ฟังก์ชันเดิมทั้งหมด (แชท, ฟีด, โปรไฟล์) ---
+    function changePage(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
+        document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
     }
 
     async function loginWithGoogle() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        await auth.signInWithPopup(provider);
+        await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     }
 
-    window.onload = () => { /* init feed logic here */ };
+    // [ก๊อปปี้ฟังก์ชัน initFeed, sendPrivateMsg และอื่นๆ จากโค้ดเดิมของคุณมาใส่ตรงนี้ต่อได้เลยครับ]
+    
+    window.onload = () => { /* เรียกใช้ฟังก์ชันเริ่มต้น */ };
 </script>
 </body>
 </html>
